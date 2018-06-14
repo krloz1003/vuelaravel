@@ -1,0 +1,2 @@
+1. ejecutar npm install para instalar los complementos de node.js
+2. Instalación de Bulma.css con npm i --save bulma (el --save es para guardar el paquete en package.json)
