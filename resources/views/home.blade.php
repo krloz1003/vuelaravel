@@ -56,11 +56,15 @@
                             <thead>
                                 <th>#</th>
                                 <th>Titulo</th>
+                                <th>Eliminar</th>
                             </thead>
                             <tbody>
                                 <tr v-for="departure in departures">
                                     <td>@{{ departure.id }}</td>
                                     <td>@{{ departure.title }}</td>
+                                    <td @click="openModal('departure','delete',departure)">
+                                        <i class="fa fa-ban" aria-hidden="true"></i>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -175,8 +179,14 @@
                                     }
                                 case 'delete':
                                     {
+                                        this.titleModal = 'Eliminación del departamento';
+                                        this.messageModal = 'Titulo del departamento';
+                                        this.modalDeparture = 3;
+                                        this.modalGeneral = 1;
+                                        this.titleDeparture = data['title'];
+                                        this.idDeparture = data['id'];
                                         break;
-                                    }
+                                    }           
 
                             }
                             break;
@@ -233,6 +243,19 @@
                     })
                     .catch(function (error) {
                         console.log(error);
+                    })
+            },
+            destroyDeparture() {
+                let me = this;
+                axios.delete('{{url('/departure/delete')}}'+'/'+this.idDeparture)
+                    .then(function (response) {
+                        me.idDeparture = 0;
+                        me.titleDeparture = '';
+                        me.modalDeparture = 0;
+                        me.closeModal();
+                    })
+                    .catch(function (error) {
+                        console.log('error: '+error);
                     })
             }
         },
