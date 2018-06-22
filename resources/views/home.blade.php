@@ -56,6 +56,7 @@
                             <thead>
                                 <th>#</th>
                                 <th>Titulo</th>
+                                <th>Editar</th>
                                 <th>Eliminar</th>
                             </thead>
                             <tbody>
@@ -64,6 +65,9 @@
                                     <td>@{{ departure.title }}</td>
                                     <td @click="openModal('departure','delete',departure)">
                                         <i class="fa fa-ban" aria-hidden="true"></i>
+                                    </td>
+                                    <td @click="openModal('departure', 'update', departure)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></li>
                                     </td>
                                 </tr>
                             </tbody>
@@ -119,7 +123,7 @@
             titleModal: '',
             messageModal: '',
             modalDeparture: 0,
-            titleDeparture: '',
+            titleDeparture: 'Valode por default',
             errorTitleDeparture: 0,
             departures:[]
         },
@@ -175,6 +179,14 @@
                                     }
                                 case 'update':
                                     {
+                                        this.error = data;
+                                        this.modalGeneral = 1;
+                                        this.titleModal = 'Modificación de Departamento';
+                                        this.messageModal = 'Modifique el titulo del departamento';
+                                        this.modalDeparture = 2;
+                                        this.titleDeparture = data['title'];
+                                        this.errorTitleDeparture = 0;
+                                        this.idDeparture = data['id'];
                                         break;
                                     }
                                 case 'delete':
@@ -237,7 +249,6 @@
                 let me = this;
                 axios.get('{{ route('allQuery') }}')
                     .then(function (response) {
-                        console.log(response);
                         let answer = response.data;
                         me.departures = answer.departures;
                     })
@@ -257,6 +268,28 @@
                     .catch(function (error) {
                         console.log('error: '+error);
                     })
+            },
+            updateDeparture(){
+                if(this.titleDeparture == ''){
+                    this.errorTitleDeparture = 1;
+                    return;
+                }
+                let me = this;
+
+                axios.put('{{route('departureupdate')}}', {
+                    'title': this.titleDeparture,
+                    'id': this.idDeparture
+                })
+                .then(function (response){
+                    me.titleDeparture = '';
+                    me.idDeparture = 0;
+                    me.errorTitleDeparture = 0;
+                    me.modalDeparture = 0;
+                    me.closeModal();
+                })
+                .catch(function (error){
+                    console.log('error: '+error);
+                })
             }
         },
     })
